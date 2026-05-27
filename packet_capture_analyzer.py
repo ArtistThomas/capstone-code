@@ -9,6 +9,7 @@ import sys
 from collections import Counter
 from typing import Dict, Iterable, List, Tuple, TypedDict
 
+# Common high-risk service ports: Telnet, RDP, VNC, SMB.
 HIGH_RISK_PORTS = {"23", "3389", "5900", "445"}
 PROTOCOL_PATTERNS = {
     "TCP": re.compile(r"\bFlags \["),
@@ -52,6 +53,7 @@ def analyze_packet_lines(lines: Iterable[str]) -> PacketAnalysis:
         total_packets += 1
         protocols[_detect_protocol(line)] += 1
 
+        # For expected tcpdump format ("IP source > dest"), first IP is source.
         ips = IP_PATTERN.findall(line)
         if ips:
             source_ips[ips[0]] += 1

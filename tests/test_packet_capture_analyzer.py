@@ -26,6 +26,7 @@ class PacketCaptureAnalyzerTests(unittest.TestCase):
         result = analyze_packet_lines(["", "   ", "\n"])
         self.assertEqual(result["total_packets"], 0)
         self.assertEqual(result["protocol_counts"], {})
+        self.assertEqual(result["top_source_ips"], [])
         self.assertEqual(result["high_risk_alerts"], [])
 
 
