@@ -7,7 +7,7 @@ import json
 import re
 import sys
 from collections import Counter
-from typing import Dict, Iterable, List
+from typing import Dict, Iterable, List, Tuple, TypedDict
 
 HIGH_RISK_PORTS = {"23", "3389", "5900", "445"}
 PROTOCOL_PATTERNS = {
@@ -19,6 +19,18 @@ IP_PATTERN = re.compile(r"\b(\d{1,3}(?:\.\d{1,3}){3})\b")
 DEST_PORT_PATTERN = re.compile(r">\s+\d{1,3}(?:\.\d{1,3}){3}\.(\d+):")
 
 
+class HighRiskAlert(TypedDict):
+    port: str
+    line: str
+
+
+class PacketAnalysis(TypedDict):
+    total_packets: int
+    protocol_counts: Dict[str, int]
+    top_source_ips: List[Tuple[str, int]]
+    high_risk_alerts: List[HighRiskAlert]
+
+
 def _detect_protocol(line: str) -> str:
     for protocol, pattern in PROTOCOL_PATTERNS.items():
         if pattern.search(line):
@@ -26,10 +38,10 @@ def _detect_protocol(line: str) -> str:
     return "OTHER"
 
 
-def analyze_packet_lines(lines: Iterable[str]) -> Dict[str, object]:
+def analyze_packet_lines(lines: Iterable[str]) -> PacketAnalysis:
     """Analyze tcpdump-style lines and return summary metrics."""
     protocols = Counter()
-    high_risk_hits: List[Dict[str, str]] = []
+    high_risk_hits: List[HighRiskAlert] = []
     source_ips = Counter()
     total_packets = 0
 
@@ -65,7 +77,11 @@ def _read_input(path: str | None) -> List[str]:
 
 def main() -> int:
     path = sys.argv[1] if len(sys.argv) > 1 else None
-    results = analyze_packet_lines(_read_input(path))
+    try:
+        results = analyze_packet_lines(_read_input(path))
+    except OSError as exc:
+        print(f"Error reading input: {exc}", file=sys.stderr)
+        return 1
     print(json.dumps(results, indent=2))
     return 0
 

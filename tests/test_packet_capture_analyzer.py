@@ -22,7 +22,7 @@ class PacketCaptureAnalyzerTests(unittest.TestCase):
         self.assertEqual(result["high_risk_alerts"][0]["port"], "3389")
         self.assertEqual(result["top_source_ips"][0], ("10.0.0.5", 2))
 
-    def test_ignores_blank_lines(self):
+    def test_analyze_packet_lines_ignores_blank_lines(self):
         result = analyze_packet_lines(["", "   ", "\n"])
         self.assertEqual(result["total_packets"], 0)
         self.assertEqual(result["protocol_counts"], {})
