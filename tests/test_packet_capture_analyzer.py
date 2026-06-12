@@ -1,6 +1,6 @@
 import unittest
 
-from packet_capture_analyzer import analyze_packet_lines
+from packet_capture_analyzer import analyze_packet_lines, format_report
 
 
 class PacketCaptureAnalyzerTests(unittest.TestCase):
@@ -28,6 +28,29 @@ class PacketCaptureAnalyzerTests(unittest.TestCase):
         self.assertEqual(result["protocol_counts"], {})
         self.assertEqual(result["top_source_ips"], [])
         self.assertEqual(result["high_risk_alerts"], [])
+
+
+class FormatReportTests(unittest.TestCase):
+    def test_format_report_includes_key_sections(self):
+        lines = [
+            "IP 10.0.0.5.51514 > 10.0.0.10.3389: Flags [S], seq 1, win 65535, length 0",
+            "IP 10.0.0.8.52525 > 10.0.0.9.53: UDP, length 42",
+        ]
+
+        report = format_report(analyze_packet_lines(lines))
+
+        self.assertIn("Packet Capture Analysis", report)
+        self.assertIn("Total packets: 2", report)
+        self.assertIn("Protocol breakdown:", report)
+        self.assertIn("Top source IPs:", report)
+        self.assertIn("High-risk alerts: 1", report)
+        self.assertIn("port 3389", report)
+
+    def test_format_report_handles_empty_analysis(self):
+        report = format_report(analyze_packet_lines([]))
+
+        self.assertIn("Total packets: 0", report)
+        self.assertIn("High-risk alerts: 0", report)
 
 
 if __name__ == "__main__":

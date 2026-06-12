@@ -21,6 +21,33 @@ Use Python 3:
 python packet_capture_analyzer.py sample_capture.txt
 ```
 
+This prints a readable report:
+
+```text
+Packet Capture Analysis
+=======================
+Total packets: 12
+
+Protocol breakdown:
+  TCP: 7
+  UDP: 3
+  ICMP: 2
+
+Top source IPs:
+  10.0.0.5: 6
+  10.0.0.8: 3
+  ...
+
+High-risk alerts: 4
+  [!] port 3389: IP 10.0.0.5.51514 > 10.0.0.10.3389: Flags [S], ...
+```
+
+For machine-readable output (for example, to pipe into another tool), add `--json`:
+
+```bash
+python packet_capture_analyzer.py --json sample_capture.txt
+```
+
 If you do not pass a file, the tool reads packet lines from standard input.
 
 ## Input format

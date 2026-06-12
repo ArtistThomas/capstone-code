@@ -1,0 +1,12 @@
+IP 10.0.0.5.51514 > 10.0.0.10.3389: Flags [S], seq 1, win 65535, length 0
+IP 10.0.0.8.52525 > 10.0.0.9.53: UDP, length 42
+IP 10.0.0.4 > 10.0.0.1: ICMP echo request, id 1, seq 1, length 64
+IP 10.0.0.5.51515 > 10.0.0.10.443: Flags [P.], length 12
+IP 10.0.0.12.40110 > 10.0.0.10.23: Flags [S], seq 9, win 65535, length 0
+IP 10.0.0.5.51516 > 10.0.0.20.80: Flags [P.], length 200
+IP 10.0.0.8.52526 > 10.0.0.9.123: UDP, length 48
+IP 10.0.0.5.51517 > 10.0.0.30.5900: Flags [S], seq 5, win 65535, length 0
+IP 10.0.0.7 > 10.0.0.1: ICMP echo request, id 2, seq 1, length 64
+IP 10.0.0.5.51518 > 10.0.0.40.445: Flags [S], seq 7, win 65535, length 0
+IP 10.0.0.8.52527 > 10.0.0.9.53: UDP, length 60
+IP 10.0.0.5.51519 > 10.0.0.20.443: Flags [P.], length 90

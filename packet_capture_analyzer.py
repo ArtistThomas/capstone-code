@@ -70,6 +70,41 @@ def analyze_packet_lines(lines: Iterable[str]) -> PacketAnalysis:
     }
 
 
+def format_report(analysis: PacketAnalysis) -> str:
+    """Render analysis results as a human-readable text report."""
+    lines: List[str] = []
+    lines.append("Packet Capture Analysis")
+    lines.append("=======================")
+    lines.append(f"Total packets: {analysis['total_packets']}")
+    lines.append("")
+
+    lines.append("Protocol breakdown:")
+    protocol_counts = analysis["protocol_counts"]
+    if protocol_counts:
+        for protocol, count in sorted(
+            protocol_counts.items(), key=lambda item: item[1], reverse=True
+        ):
+            lines.append(f"  {protocol}: {count}")
+    else:
+        lines.append("  (none)")
+    lines.append("")
+
+    lines.append("Top source IPs:")
+    if analysis["top_source_ips"]:
+        for ip, count in analysis["top_source_ips"]:
+            lines.append(f"  {ip}: {count}")
+    else:
+        lines.append("  (none)")
+    lines.append("")
+
+    alerts = analysis["high_risk_alerts"]
+    lines.append(f"High-risk alerts: {len(alerts)}")
+    for alert in alerts:
+        lines.append(f"  [!] port {alert['port']}: {alert['line']}")
+
+    return "\n".join(lines)
+
+
 def _read_input(path: str | None) -> List[str]:
     if path:
         with open(path, "r", encoding="utf-8") as handle:
@@ -78,13 +113,21 @@ def _read_input(path: str | None) -> List[str]:
 
 
 def main() -> int:
-    path = sys.argv[1] if len(sys.argv) > 1 else None
+    args = sys.argv[1:]
+    as_json = False
+    if "--json" in args:
+        as_json = True
+        args = [arg for arg in args if arg != "--json"]
+    path = args[0] if args else None
     try:
         results = analyze_packet_lines(_read_input(path))
     except OSError as exc:
         print(f"Error reading input: {exc}", file=sys.stderr)
         return 1
-    print(json.dumps(results, indent=2))
+    if as_json:
+        print(json.dumps(results, indent=2))
+    else:
+        print(format_report(results))
     return 0
 
 
